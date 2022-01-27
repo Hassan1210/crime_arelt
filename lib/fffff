@@ -1,0 +1,437 @@
+
+                CircleAvatar(
+                  child: ClipOval(
+                      child: Image.network(Images.toString(),
+                      width: 120, fit: BoxFit.fill,),
+                  ),
+                  radius: 50,
+                ),
+                FloatingActionButton(
+                  onPressed: () {
+                    upload_image();
+                  },
+                  child: Text('Upload'),
+                  backgroundColor: Colors.black,
+                  tooltip: 'Capture Picture',
+                  elevation: 5,
+                  splashColor: Colors.grey,
+                ),
+
+
+                 Future get_image() async{
+                    var image = await imagePicker.getImage(source: ImageSource.gallery);
+                    if(image == null)
+                      {
+                        return;
+                      }
+                    setState(() {
+                      imageFile = File(image.path);
+                    });
+                  }
+                  Future upload_image() async{
+                    FirebaseStorage storage = FirebaseStorage.instance;
+
+                    Reference ref = storage.ref().child("profileImages/$email");
+                   UploadTask uploadTask =  ref.putFile(imageFile);
+                    await  uploadTask.whenComplete(() async {
+                      String url = await ref.getDownloadURL();
+                      print(url);
+                      updateImage(url);
+                      setState(() {
+                        //Scaffold.of(context).showSnackBar(SnackBar(content: Text('Profile Picture Uploaded')));
+
+                      });
+                    }).catchError((onError) {
+                      print(onError);
+                    });
+                  }
+                  final FirebaseAuth _auth = FirebaseAuth.instance;
+                  Future updateImage(var url ) async {
+                    try {
+                      CollectionReference users = FirebaseFirestore.instance.collection('users');
+                      final user = await FirebaseAuth.instance.currentUser;
+
+                      users.doc(user!.uid).set({
+                        'name' : name,
+                        'email': email,
+                        'image': url,
+                      });
+                    } catch (e) {}
+                  }
+
+                                        CircleAvatar(radius: 30,backgroundImage: AssetImage('images/profile.jpg'),),
+
+
+Expanded(
+                              flex: 5,
+                              child: TextField(
+                                enabled: false,
+                                controller:Phone_Controller,
+                                decoration: InputDecoration(
+                                    contentPadding: EdgeInsets.only(bottom: 3),
+                                    labelText: 'Email',
+                                    floatingLabelBehavior: FloatingLabelBehavior.always,
+                                    hintText: 'Enter Your Email',
+                                    //hintStyle: Selected
+                                ),
+                              )
+                          ),
+                          SizedBox(height: 35,),
+                          Expanded(
+                              flex: 5,
+                              child: TextField(
+                                enabled: enabled,
+                                controller:Name_Controller,
+                                decoration: InputDecoration(
+                                    contentPadding: EdgeInsets.only(bottom: 3),
+                                    labelText: 'NAME',
+                                    floatingLabelBehavior: FloatingLabelBehavior.always,
+                                    hintText: 'Enter Your Name',
+                                    //hintStyle: Unselected
+                                ),
+                              )
+                          ),
+                          SizedBox(height: 35,),
+                          Expanded(
+                              flex: 5,
+                              child: TextField(
+                                enabled: enabled,
+                                controller:Phone_Controller,
+                                decoration: InputDecoration(
+                                    contentPadding: EdgeInsets.only(bottom: 3),
+                                    labelText: 'Phone',
+                                    floatingLabelBehavior: FloatingLabelBehavior.always,
+                                    hintText: 'Enter Your Phone',
+                                   // hintStyle: Unselected,
+                                ),
+                              )
+                          ),
+
+
+
+
+
+
+
+
+                            'https://blog.ipleaders.in/wp-content/uploads/2019/09/000.jpg',
+                            'https://st2.depositphotos.com/2631505/10083/i/950/depositphotos_100836064-stock-photo-teenager-woman-abused-suffering-internet.jpg',
+                            'https://blogs.iadb.org/ideas-matter/wp-content/uploads/sites/12/2019/06/surprisingly-negative-impact-domestic-violence-campaigns.jpg',
+                            'https://www.news-medical.net/image.axd?picture=2021%2F1%2Fshutterstock_544348294.jpg',
+                            'https://media.istockphoto.com/photos/knife-in-darkness-picture-id1132879289?k=20&m=1132879289&s=612x612&w=0&h=oXcPGJ0tCtiLR71-QvoFHzVV9RpGVxVwAA29G7Vz_-I=',
+                            'https://cdn.corporatefinanceinstitute.com/assets/frauds-in-audit-1024x681.jpeg',
+                            'https://thumbs.dreamstime.com/b/car-thief-car-robbery-concept-photo-caucasian-male-black-mask-trying-to-open-using-custom-tool-flashlight-57778122.jpg',
+                            'data:image/jpeg;base64,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',
+
+
+
+SingleChildScrollView(
+        child: Column(
+            children: [
+              Container(
+                color: Colors.redAccent,
+                height: 56,
+                child: Center(
+                    child: Text(
+                      'My Complains',
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20),
+                    )),
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              Row(
+                children: [
+                  CategoryButton(image: 'https://media.istockphoto.com/photos/hooded-person-holding-a-lighter-in-front-of-burning-house-picture-id154945598?k=20&m=154945598&s=612x612&w=0&h=3xrLdxqd91bvnH6XOwrLfRaiJJmsTif6vvMLIO1OBsA=',
+                    text: 'Arson',),
+                  CategoryButton(image: 'https://blog.ipleaders.in/wp-content/uploads/2019/09/000.jpg',
+                    text: 'Assault',),
+                ],
+              ),
+              SizedBox(height: 20,),
+              Row(
+                children: [
+                  CategoryButton(image:'https://st2.depositphotos.com/2631505/10083/i/950/depositphotos_100836064-stock-photo-teenager-woman-abused-suffering-internet.jpg',
+
+                    text: 'Blackmail',),
+                  CategoryButton(image: 'https://www.deccanherald.com/sites/dh/files/styles/article_detail/public/article_images/2018/09/21/suicide-dh-1537532497.jpg?itok=DTRsfNV_',
+                    text: 'Suicide',),
+                ],
+              ),
+              SizedBox(height: 20,),
+              Row(
+                children: [
+                  CategoryButton(image:'https://blogs.iadb.org/ideas-matter/wp-content/uploads/sites/12/2019/06/surprisingly-negative-impact-domestic-violence-campaigns.jpg',
+
+                    text: 'Domestic Violence',),
+                  CategoryButton(image:'https://www.news-medical.net/image.axd?picture=2021%2F1%2Fshutterstock_544348294.jpg',
+
+                    text: 'Drug',),
+                ],
+              ),
+              SizedBox(height: 20,),
+              Row(
+                children: [
+                  CategoryButton(image: 'https://media.istockphoto.com/photos/knife-in-darkness-picture-id1132879289?k=20&m=1132879289&s=612x612&w=0&h=oXcPGJ0tCtiLR71-QvoFHzVV9RpGVxVwAA29G7Vz_-I=',
+
+                    text: 'Murder',),
+                  CategoryButton(image:'https://cdn.corporatefinanceinstitute.com/assets/frauds-in-audit-1024x681.jpeg',
+
+                    text: 'Fraud',),
+                ],
+              ),
+              SizedBox(height: 20,),
+              Row(
+                children: [
+                  CategoryButton(image:'https://thumbs.dreamstime.com/b/car-thief-car-robbery-concept-photo-caucasian-male-black-mask-trying-to-open-using-custom-tool-flashlight-57778122.jpg',
+
+                    text: 'Robbery',),
+                  CategoryButton(image: 'https://media.istockphoto.com/photos/and-a-concept-yellow-question-mark-glowing-amid-black-question-marks-picture-id1305169776?b=1&k=20&m=1305169776&s=170667a&w=0&h=mpYdh2MzGN_rqxoRNlO5KWGCCq3ZktzSfp-wA0nD9no=',
+                    text: 'Other',),
+                ],
+              ),
+            ],
+        ),
+      )
+
+
+
+      FutureBuilder(
+                               future: fetch(),
+                                builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot){
+                                  switch (snapshot.connectionState) {
+                                    case ConnectionState.waiting: return CircularProgressIndicator();
+                                    default:
+                                      if (snapshot.hasError)
+                                        return Text('Error: ${snapshot.error}');
+                                      else
+
+                                       return}})
+
+
+
+
+
+
+
+                                       StreamBuilder(
+                                               stream: ref.child('Complains').child(userid.toString()).orderByKey().onValue,
+                                                 builder: (context, snapshot){
+                                                 final tilesList = <Column>[];
+                                                 if(!snapshot.hasData){
+                                                   return CircularProgressIndicator();
+                                                 }
+                                                 else if(snapshot.hasData && snapshot.data == null){
+                                                   print('hhjhj');
+                                                 }
+                                                 else{{
+                                                   print('jdcddjkj');
+                                                   final mylist = Map<String,dynamic>.from((snapshot.data!as Event).snapshot.value);
+                                                   mylist.forEach((key, value) {
+                                                     final listOfRecords = Map<String,dynamic>.from(value);
+                                                     final LastRecord = Column(
+                                                       children: [
+                                                         Divider(thickness: 2,),
+                                                         Container(
+                                                           child:Padding(
+                                                             padding: const EdgeInsets.all(18),
+                                                             child: Row(
+                                                               crossAxisAlignment: CrossAxisAlignment.start,
+                                                               children: [
+                                                                 Text(listOfRecords['date']),
+                                                                 SizedBox(width: 60),
+                                                                 Text(listOfRecords['date']),
+                                                                 SizedBox(width: 60),
+                                                                 Text('Status'),
+                                                               ],
+                                                             ),
+                                                           ),
+                                                         ),
+                                                       ],
+                                                     );tilesList.add(LastRecord);
+                                                   });
+                                                 }}
+                                                 return Column(
+                                                   children: [
+                                                     Container(
+                                                       child:Padding(
+                                                         padding: const EdgeInsets.all(20),
+                                                         child: Row(
+                                                           children: [
+                                                             Text('Complain ID',style: TextStyle(fontWeight: FontWeight.bold),),
+                                                             SizedBox(width: 65),
+                                                             Text('Date',style: TextStyle(fontWeight: FontWeight.bold)),
+                                                             SizedBox(width: 65),
+                                                             Text('Status',style: TextStyle(fontWeight: FontWeight.bold)),
+                                                           ],
+                                                         ),
+                                                       ),
+                                                     ),
+                                                     Column(
+                                                       children: tilesList.length ==0?[Text('No Data Found')]:tilesList ,
+                                                     )
+                                                   ],
+                                                 );
+                                                 },
+                                             ),
+
+
+
+
+
+                                             Stack(
+                                                     children: [
+                                                       Positioned(
+                                                         top: 230,
+                                                         left: 63,
+                                                           bottom: 0,
+                                                           child: Container(
+                                                             height: 500,
+                                                              width: 250,
+                                                             decoration: BoxDecoration(
+                                                               image: DecorationImage(
+                                                                 image: AssetImage('images/Background.png')
+                                                               )
+                                                             ),
+                                                       )
+                                                       ),
+                                                     Column(
+                                                       children: [
+                                                         Container(
+                                                           color: Colors.redAccent,
+                                                           height: 56,
+                                                           child: Center(
+                                                               child: Text(
+                                                             'My Complains',
+                                                             style: TextStyle(
+                                                                 color: Colors.white,
+                                                                 fontWeight: FontWeight.bold,
+                                                                 fontSize: 20),
+                                                           )),
+                                                         ),
+                                                         SizedBox(
+                                                           height: 20,
+                                                         ),
+                                                         Row(
+                                                           children: [
+                                                             CardButton(
+                                                               no: widget.total.toString(),
+                                                               onpress: () {},
+                                                               text: 'Total Complain',
+                                                               color: Total_Complain,
+                                                             )
+                                                           ],
+                                                         ),
+                                                         Row(
+                                                           children: [
+                                                             CardButton(
+                                                               no: widget.approved.toString(),
+                                                               onpress: () {},
+                                                               text: 'Approved',
+                                                               color: Approved,
+                                                             ),
+                                                             CardButton(
+                                                               no: widget.pending.toString(),
+                                                               onpress: () {},
+                                                               text: 'Pending',
+                                                               color: Pending,
+                                                             ),
+                                                             CardButton(
+                                                               no: widget.rejected.toString(),
+                                                               onpress: () {},
+                                                               text: 'Rejected',
+                                                               color: Rejected,
+                                                             )
+                                                           ],
+                                                         )
+
+                                                       ],
+                                                     ),
+                                                     ]
+                                                   ),
+
+
+
+
+
+
+
+
+                                                   ListView(
+                                                           children: [
+                                                             Container(
+                                                               color: Colors.redAccent,
+                                                               height: 56,
+                                                               child: Center(
+                                                                   child: Text(
+                                                                     'Suggestion',
+                                                                     style: TextStyle(
+                                                                         color: Colors.white,
+                                                                         fontWeight: FontWeight.bold,
+                                                                         fontSize: 20),
+                                                                   )),
+                                                             ),
+                                                             SizedBox(height: 40,),
+                                                             Padding(
+                                                               padding:
+                                                               const EdgeInsets.only(left: 30, top: 0, right: 30),
+                                                               child: TextField(
+                                                                 enabled: false,
+                                                                 decoration: InputDecoration(
+                                                                   contentPadding: EdgeInsets.only(bottom: 3),
+                                                                   labelText: 'Name',
+                                                                   hintText: name.toString(),
+                                                                   floatingLabelBehavior: FloatingLabelBehavior.always,
+                                                                 ),
+                                                               ),
+                                                             ),
+                                                             SizedBox(
+                                                               height: 35,
+                                                             ),
+                                                             Padding(
+                                                               padding:
+                                                               const EdgeInsets.only(left: 30, top: 0, right: 30),
+                                                               child: TextField(
+                                                                 enabled: false,
+                                                                 decoration: InputDecoration(
+                                                                   contentPadding: EdgeInsets.only(bottom: 3),
+                                                                   labelText: 'Email',
+                                                                   hintText: email.toString(),
+                                                                   floatingLabelBehavior: FloatingLabelBehavior.always,
+                                                                 ),
+                                                               ),
+                                                             ),
+                                                             SizedBox(
+                                                               height: 35,
+                                                             ),
+                                                           ],
+                                                         ),
+
+
+                                                         setState(() {
+                                                                           enabled = enabled?false:true;
+                                                                           final _emailValue = email;
+                                                                           Email_Controller.value = TextEditingValue(
+                                                                             text: _emailValue.toString(),
+                                                                             selection: TextSelection.fromPosition(
+                                                                               TextPosition(offset: _emailValue.toString().length),
+                                                                             ),
+                                                                           );
+                                                                           final _nameValue = name;
+                                                                           Name_Controller.value = TextEditingValue(
+                                                                             text: _nameValue.toString(),
+                                                                             selection: TextSelection.fromPosition(
+                                                                               TextPosition(offset: _nameValue.toString().length),
+                                                                             ),
+                                                                           );
+                                                                           final _phoneValue = phone == null?'':phone.toString();
+                                                                           Phone_Controller.value = TextEditingValue(
+                                                                             text: _phoneValue,
+                                                                             selection: TextSelection.fromPosition(
+                                                                               TextPosition(offset: _phoneValue.toString().length),
+                                                                             ),
+                                                                           );
+                                                                         });
